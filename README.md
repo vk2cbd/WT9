@@ -8,7 +8,7 @@ Historical WT8 and WT7 development remains available through the predecessor rep
 ## Install
 
 WT9 is the current application and repository name. The launch module is
-`wt9_ubuntu_gui.py`, the default configuration is `wt9_ubuntu.ini`,
+`wt9_ubuntu_gui.py`, the default configuration is `wt9.ini`,
 and the release series starts at `v0.1.0` (with the checked-out Git
 revision shown in the GUI).
 
@@ -20,9 +20,9 @@ previous antenna configuration to the new default name if needed:
 
 ```bash
 cd ~/WT9
-cp -n ~/WT8/wt8_ubuntu.ini wt9_ubuntu.ini
+cp -n ~/WT8/wt8_ubuntu.ini wt9.ini  # Only if you need to replace the repository's WT9 settings
 # Alternatively, if your config lives in another directory, copy that file.
-python3 wt9_ubuntu_gui.py --config wt9_ubuntu.ini
+python3 wt9_ubuntu_gui.py --config wt9.ini
 ```
 
 Review the copied controller ports, limits, site coordinates, and calibration
@@ -45,7 +45,7 @@ Connect both USB serial controllers and identify their stable device paths:
 ls -l /dev/serial/by-id/
 ```
 
-In `wt9_ubuntu.ini`, set the `port` entry in each antenna section to
+In `wt9.ini`, set the `port` entry in each antenna section to
 the corresponding **full path**, e.g.:
 
 ```ini
@@ -70,8 +70,7 @@ the INI file.
 ## Configure
 
 ```bash
-cp wt9_ubuntu.ini.example wt9_ubuntu.ini
-nano wt9_ubuntu.ini
+nano wt9.ini
 ```
 
 Copying an existing WT7 INI is supported: missing Service coordinates default to AZ 0°, EL 5°. Each `[antenna:East]` and `[antenna:West]` section can define its own `service_az` and `service_el`. They can also be edited in the Limits dialog. Check limits and mechanical clearance before use.
@@ -79,7 +78,7 @@ Copying an existing WT7 INI is supported: missing Service coordinates default to
 ## Run
 
 ```bash
-python3 wt9_ubuntu_gui.py --config wt9_ubuntu.ini
+python3 wt9_ubuntu_gui.py --config wt9.ini
 ```
 
 ## Service function
@@ -151,7 +150,7 @@ The `main` branch is unchanged. Pre-redesign rollback branch:
 cd ~/WT9
 git pull origin feature/manual-latched-gui-redesign
 QT_QPA_PLATFORM=offscreen python3 -m unittest discover -s tests -v
-python3 wt9_ubuntu_gui.py --config wt9_ubuntu.ini
+python3 wt9_ubuntu_gui.py --config wt9.ini
 ```
 
 **Do not operate the stable and development copies against the same controller simultaneously.** Verify STOP, reversal, software limits, motion timeout and both-axis control under attended conditions before using the development build operationally. For rollback, use your existing `main` checkout, or switch the development checkout to `backup/pre-gui-redesign-2026-11-14` after stopping the application.
