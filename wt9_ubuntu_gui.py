@@ -2459,7 +2459,7 @@ class WT9App(QWidget):
             except Exception: pass
         event.accept()
 def parse_args():
-    p=argparse.ArgumentParser(description='Launch WT9 PyQt5 antenna GUI.'); p.add_argument('--config',default='wt9_ubuntu.ini',help='Config file. Default: wt9_ubuntu.ini'); return p.parse_args()
+    p=argparse.ArgumentParser(description='Launch WT9 PyQt5 antenna GUI.'); p.add_argument('--config',default='wt9.ini',help='Config file. Default: wt9.ini'); return p.parse_args()
 def main():
     args=parse_args(); app=QApplication([])
     app.setApplicationName('WT9')
