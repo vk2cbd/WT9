@@ -7,6 +7,30 @@ Historical WT8 and WT7 development remains available through the predecessor rep
 
 ## Install
 
+WT9 is the current application and repository name. The launch module is
+`wt9_ubuntu_gui.py`, the default configuration is `wt9_ubuntu.ini`,
+and the release series starts at `v0.1.0` (with the checked-out Git
+revision shown in the GUI).
+
+### Migrating an existing local installation
+
+The new repository does not automatically rename configuration files or
+transfer existing Qt preferences. In your `~/WT9` checkout, copy your
+previous antenna configuration to the new default name if needed:
+
+```bash
+cd ~/WT9
+cp -n ~/WT8/wt8_ubuntu.ini wt9_ubuntu.ini
+# Alternatively, if your config lives in another directory, copy that file.
+python3 wt9_ubuntu_gui.py --config wt9_ubuntu.ini
+```
+
+Review the copied controller ports, limits, site coordinates, and calibration
+settings before connecting the antenna drives. The new WT9 Qt settings
+namespace is independent of the former WT8 settings namespace; re-enter
+Network Config and any GUI preferences as needed.
+
+
 ```bash
 python3 -m pip install -r requirements.txt
 ```
@@ -58,7 +82,7 @@ Copying an existing WT7 INI is supported: missing Service coordinates default to
 python3 wt9_ubuntu_gui.py --config wt9_ubuntu.ini
 ```
 
-## Service function (WT9 v0.2)
+## Service function
 
 The **Service** button is between **Stop Track** and **Park**. It stops source tracking and drives each connected antenna to its fixed configured service coordinates. It does not track after arrival or disconnect. It uses the existing `SafeAntenna.guarded_slew_to` motion protection and performs a separate preflight that rejects any Service target outside the permitted AZ/EL arc or inside the configured safety margins plus stopping tolerances. If either connected antenna fails preflight, neither begins a Service move.
 
@@ -95,7 +119,7 @@ scripts importing those interfaces must be updated before upgrading.
 - `wt9_b210_power.py`: B210 power measurement
 - `tests/`: automated regression tests
 
-The original WT7 application-description PDF remains in WT7. The GitHub connector could not transfer that binary file to WT9; refer to the WT7 repository for it.
+The original WT7 application-description PDF remains in WT7. The historical PDF is not part of the WT9 source tree; refer to the WT7 repository for it.
 
 ## v0.3 GUI fixed-position integration
 
@@ -124,7 +148,7 @@ The `main` branch is unchanged. Pre-redesign rollback branch:
 ### Run the experimental branch
 
 ```bash
-cd ~/WT9-DEV
+cd ~/WT9
 git pull origin feature/manual-latched-gui-redesign
 QT_QPA_PLATFORM=offscreen python3 -m unittest discover -s tests -v
 python3 wt9_ubuntu_gui.py --config wt9_ubuntu.ini
@@ -160,7 +184,7 @@ nor a Python voice virtual environment is needed at runtime**.
 To generate or regenerate the current voice pack:
 
 ```bash
-cd ~/WT9-DEV
+cd ~/WT9
 sudo apt install alsa-utils python3-venv libsndfile1 espeak-ng
 python3 -m venv .kokoro-venv
 .kokoro-venv/bin/python -m pip install --upgrade pip
