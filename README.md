@@ -1,9 +1,9 @@
 # WT9 — Two-antenna radio astronomy controller
 
-Current development GUI version: **v0.4-dev** (stable main remains separate).
+Current WT9 application version: **v0.1.0** (Git commit hash shown in the GUI).
 
-WT8 is the PyQt5 successor to WT7 v0.31 (source commit `1a42515a4f40d6dd43469572b3497d28bbf952c4`).
-The original WT7 source is preserved in the preceding WT8 migration-baseline commit `b0cb6328aeff805f6f84d46951dd500026c59c66`.
+WT9 is the independent successor to the WT8 development codebase, retaining its Git history and two-antenna control functionality.
+Historical WT8 and WT7 development remains available through the predecessor repositories and Git history.
 
 ## Install
 
@@ -21,7 +21,7 @@ Connect both USB serial controllers and identify their stable device paths:
 ls -l /dev/serial/by-id/
 ```
 
-In `wt8_ubuntu.ini`, set the `port` entry in each antenna section to
+In `wt9_ubuntu.ini`, set the `port` entry in each antenna section to
 the corresponding **full path**, e.g.:
 
 ```ini
@@ -35,19 +35,19 @@ port = /dev/serial/by-id/usb-YOUR_WEST_CONTROLLER_ID
 These are illustrative identifiers, not actual devices. Retain the other
 existing INI settings. Verify each device's identity before assigning it to
 East or West; do not assume `ttyUSB0` always corresponds to East.
-The WT8 status bar resolves these paths to short names such as `ttyUSB0` and
+The WT9 status bar resolves these paths to short names such as `ttyUSB0` and
 `ttyUSB1` for display, while controller connections continue using the
 persistent paths. If a configured by-id device is missing, the status bar
-shows `device unavailable`. WT8 does not automatically convert Windows
-`COM5` or `COM6` names into Linux device paths. Restart WT8 after editing
+shows `device unavailable`. WT9 does not automatically convert Windows
+`COM5` or `COM6` names into Linux device paths. Restart WT9 after editing
 the INI file.
 
 
 ## Configure
 
 ```bash
-cp wt8_ubuntu.ini.example wt8_ubuntu.ini
-nano wt8_ubuntu.ini
+cp wt9_ubuntu.ini.example wt9_ubuntu.ini
+nano wt9_ubuntu.ini
 ```
 
 Copying an existing WT7 INI is supported: missing Service coordinates default to AZ 0°, EL 5°. Each `[antenna:East]` and `[antenna:West]` section can define its own `service_az` and `service_el`. They can also be edited in the Limits dialog. Check limits and mechanical clearance before use.
@@ -55,10 +55,10 @@ Copying an existing WT7 INI is supported: missing Service coordinates default to
 ## Run
 
 ```bash
-python3 wt8_ubuntu_gui.py --config wt8_ubuntu.ini
+python3 wt9_ubuntu_gui.py --config wt9_ubuntu.ini
 ```
 
-## Service function (WT8 v0.2)
+## Service function (WT9 v0.2)
 
 The **Service** button is between **Stop Track** and **Park**. It stops source tracking and drives each connected antenna to its fixed configured service coordinates. It does not track after arrival or disconnect. It uses the existing `SafeAntenna.guarded_slew_to` motion protection and performs a separate preflight that rejects any Service target outside the permitted AZ/EL arc or inside the configured safety margins plus stopping tolerances. If either connected antenna fails preflight, neither begins a Service move.
 
@@ -66,7 +66,7 @@ The **Service** button is between **Stop Track** and **Park**. It stops source t
 
 ## Precision Park and Service (verification update)
 
-Both fixed-position commands now use `wt8_precision.precision_fixed_slew`.
+Both fixed-position commands now use `wt9_precision.precision_fixed_slew`.
 The routine disables direction-dependent azimuth target compensation **only for Park and Service**; tracking retains its existing behaviour. It commands a guarded slew, waits 1 second for settling, reads fresh encoders and checks the *requested* coordinates within ±0.15° on both axes. If necessary it makes at most two additional guarded low-speed corrections, verifying after each. Failure to meet tolerance raises a positioning fault instead of displaying PARKED/SERVICE. The preflight rejects targets near configured limits (margin plus 0.15°); this may reject previously accepted Park coordinates. All motion still uses the established safety controller.
 
 The event log records `PARK_VERIFY` and `SERVICE_VERIFY` with attempt, target, measured coordinates and error. Cancellation is supported by STOP ALL or individual antenna STOP; cancelled operations do not report success. **This has not yet been validated on actual antenna hardware.** Do not use these moves for unattended or personnel-safe maintenance until mechanical clearances, approach directions and stopping distances have been tested.
@@ -83,19 +83,19 @@ Hardware tests are required before operational use. The software tests do not es
 
 The development application imports its active controller, astronomy, calibration,
 configuration, safety and voice functionality directly from the maintained modules.
-The unused compatibility modules `wt8_protocol.py`, `wt8_safety.py`,
-`wt8_tracking.py` and `wt8_calibration.py` were retired in the Stage 2 cleanup.
+The unused compatibility modules `wt9_protocol.py`, `wt9_safety.py`,
+`wt9_tracking.py` and `wt9_calibration.py` were retired in the Stage 2 cleanup.
 Their earlier implementations remain available through Git history. External
 scripts importing those interfaces must be updated before upgrading.
 
-- `wt8_ubuntu_gui.py`: PyQt5 GUI and Service workflow
-- `wt8_antenna.py`: Arduino protocol and guarded motion
-- `wt8_service.py`: fixed Service destination preflight
-- `wt8_config.py`: INI configuration
-- `wt8_b210_power.py`: B210 power measurement
+- `wt9_ubuntu_gui.py`: PyQt5 GUI and Service workflow
+- `wt9_antenna.py`: Arduino protocol and guarded motion
+- `wt9_service.py`: fixed Service destination preflight
+- `wt9_config.py`: INI configuration
+- `wt9_b210_power.py`: B210 power measurement
 - `tests/`: automated regression tests
 
-The original WT7 application-description PDF remains in WT7. The GitHub connector could not transfer that binary file to WT8; refer to the WT7 repository for it.
+The original WT7 application-description PDF remains in WT7. The GitHub connector could not transfer that binary file to WT9; refer to the WT7 repository for it.
 
 ## v0.3 GUI fixed-position integration
 
@@ -103,7 +103,7 @@ The original WT7 application-description PDF remains in WT7. The GitHub connecto
 - Stop Track now interrupts Park and Service as well as source tracking. It requests cancellation and issues hardware stop commands to both antennas, using the same emergency-stop pathway as STOP ALL. A cancelled move is not marked PARKED/SERVICE.
 - PARKING and SERVICING states are restored after the prior tracking worker has exited, avoiding stale tracking cleanup overwriting the movement label. SERVICING is recognised as an active motion state for rate readouts.
 - Fixed-target display is cleared when stopped or faulted; verified successful arrivals retain the destination display. Source tracking continues to use its existing astronomical target logic.
-- New headless Qt GUI tests: `tests/test_wt8_fixed_gui.py`.
+- New headless Qt GUI tests: `tests/test_wt9_fixed_gui.py`.
 
 **Hardware safety:** Stop Track now issues stop commands for both antennas during Park/Service. Verify physical response, encoder error updates and safe cancellation under supervision before routine use. Software changes and tests have not yet been exercised on real hardware.
 
@@ -124,10 +124,10 @@ The `main` branch is unchanged. Pre-redesign rollback branch:
 ### Run the experimental branch
 
 ```bash
-cd ~/WT8-DEV
+cd ~/WT9-DEV
 git pull origin feature/manual-latched-gui-redesign
 QT_QPA_PLATFORM=offscreen python3 -m unittest discover -s tests -v
-python3 wt8_ubuntu_gui.py --config wt8_ubuntu.ini
+python3 wt9_ubuntu_gui.py --config wt9_ubuntu.ini
 ```
 
 **Do not operate the stable and development copies against the same controller simultaneously.** Verify STOP, reversal, software limits, motion timeout and both-axis control under attended conditions before using the development build operationally. For rollback, use your existing `main` checkout, or switch the development checkout to `backup/pre-gui-redesign-2026-11-14` after stopping the application.
@@ -152,7 +152,7 @@ The manual control heading, Momentary/Latched segmented selector, direction pad,
 
 ### Offline Kokoro voice annunciation (development branch)
 
-WT8 plays pre-rendered East/West state-announcement WAV files through Ubuntu's
+WT9 plays pre-rendered East/West state-announcement WAV files through Ubuntu's
 `aplay`. The current voice is **Kokoro `bf_emma`**, British English female.
 Speech generation is an optional one-time preparation step; **neither Kokoro
 nor a Python voice virtual environment is needed at runtime**.
@@ -160,7 +160,7 @@ nor a Python voice virtual environment is needed at runtime**.
 To generate or regenerate the current voice pack:
 
 ```bash
-cd ~/WT8-DEV
+cd ~/WT9-DEV
 sudo apt install alsa-utils python3-venv libsndfile1 espeak-ng
 python3 -m venv .kokoro-venv
 .kokoro-venv/bin/python -m pip install --upgrade pip
