@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 venv/
 
+wt9_ubuntu.ini
 ri_ubuntu.ini
 logs/
 scan/
