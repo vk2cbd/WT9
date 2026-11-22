@@ -14,16 +14,16 @@ revision shown in the GUI).
 
 ### Migrating an existing local installation
 
-The new repository does not automatically rename configuration files or
-transfer existing Qt preferences. In your `~/WT9` checkout, copy your
-previous antenna configuration to the new default name if needed:
+The repository contains `wt9.ini`, renamed from the original `wt8.ini`.
+The migration does not transfer existing Qt preferences. To launch with the
+repository configuration:
 
 ```bash
 cd ~/WT9
-cp -n ~/WT8/wt8_ubuntu.ini wt9.ini  # Only if you need to replace the repository's WT9 settings
-# Alternatively, if your config lives in another directory, copy that file.
 python3 wt9_ubuntu_gui.py --config wt9.ini
 ```
+
+If you have newer local settings, back up `wt9.ini` before replacing it.
 
 Review the copied controller ports, limits, site coordinates, and calibration
 settings before connecting the antenna drives. The new WT9 Qt settings
