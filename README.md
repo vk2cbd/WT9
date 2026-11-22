@@ -1,4 +1,4 @@
-# WT8 — Two-antenna radio astronomy controller
+# WT9 — Two-antenna radio astronomy controller
 
 Current development GUI version: **v0.4-dev** (stable main remains separate).
 
