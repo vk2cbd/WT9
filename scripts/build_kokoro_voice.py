@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generate WT8's offline annunciation WAV pack with Kokoro British voice bf_emma.
+"""Generate WT9's offline annunciation WAV pack with Kokoro British voice bf_emma.
 
-Run once in a dedicated Python virtual environment; WT8 only needs the WAVs.
+Run once in a dedicated Python virtual environment; WT9 only needs the WAVs.
 """
 import argparse
 from pathlib import Path
@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from wt8_voice import PHRASES
+from wt9_voice import PHRASES
 
 
 def render(pipeline, text, voice, speed):
@@ -52,7 +52,7 @@ def main():
     parser.add_argument("--voice", default="bf_emma")
     parser.add_argument("--speed", type=float, default=0.95)
     parser.add_argument("--output", type=Path, default=ROOT / "voice" / "en_AU_female",
-                        help="WT8's existing WAV folder (name retained for compatibility)")
+                        help="WT9's existing WAV folder (name retained for compatibility)")
     parser.add_argument("--test-only", action="store_true",
                         help="Generate only east_test and west_tracking for audition")
     args = parser.parse_args()
